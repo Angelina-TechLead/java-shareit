@@ -2,13 +2,22 @@ package shareit.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import shareit.dto.CommentDto;
+import shareit.dto.CommentMapper;
 import shareit.dto.ItemDto;
 import shareit.dto.ItemMapper;
+import shareit.exception.BadRequestException;
+import shareit.exception.NotFoundRequestException;
+import shareit.model.Comment;
 import shareit.model.Item;
 import shareit.model.User;
+import shareit.repository.BookingRepository;
+import shareit.repository.CommentRepository;
 import shareit.repository.ItemRepository;
 import shareit.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,13 +27,15 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public ItemDto create(ItemDto itemDto, Long userId) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден!"));
 
-        Item item = new Item(null, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), owner, null);
+        Item item = new Item(null, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), owner, null, null);
         itemRepository.save(item);
         return ItemMapper.toItemDto(item);
     }
@@ -89,5 +100,30 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> search(String text) {
         List<Item> items = itemRepository.findByAvailableTrueAndNameContainingIgnoreCaseOrAvailableTrueAndDescriptionContainingIgnoreCase(text, text);
         return items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public CommentDto addComment(Long itemId, Long userId, CommentDto commentDto) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundRequestException("Предмет не найден"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundRequestException("Пользователь не найден"));
+
+        boolean hasCompletedBooking = bookingRepository.existsByItemIdAndBookerIdAndEndBefore(
+                itemId, userId, LocalDateTime.now());
+
+        if (!hasCompletedBooking) {
+            throw new BadRequestException("Пользователь не может оставить комментарий без завершённого бронирования");
+        }
+
+        var comment = new Comment(null,
+                commentDto.getText(),
+                item,
+                user,
+                LocalDateTime.now());
+
+        commentRepository.save(comment);
+        return CommentMapper.toDto(comment);
     }
 }
