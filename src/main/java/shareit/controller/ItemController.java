@@ -2,6 +2,7 @@ package shareit.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import shareit.dto.CommentDto;
 import shareit.dto.ItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +53,12 @@ public class ItemController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteItem(@PathVariable Long id) {
         itemService.delete(id);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@PathVariable Long itemId,
+                                  @RequestHeader("X-Sharer-User-Id") Long userId,
+                                  @Valid @RequestBody CommentDto commentDto) {
+        return itemService.addComment(itemId, userId, commentDto);
     }
 }

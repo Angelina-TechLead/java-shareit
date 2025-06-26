@@ -1,5 +1,6 @@
 package shareit.service;
 
+import shareit.dto.CommentDto;
 import shareit.dto.ItemDto;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface ItemService {
     ItemDto getById(Long itemId);
     List<ItemDto> getAll(Long userId);
     List<ItemDto> search(String text);
+    CommentDto addComment(Long itemId, Long userId, CommentDto commentDto);
 }
