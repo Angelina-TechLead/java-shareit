@@ -11,15 +11,18 @@ import shareit.exception.BadRequestException;
 import shareit.exception.NotFoundRequestException;
 import shareit.model.Comment;
 import shareit.model.Item;
+import shareit.model.ItemRequest;
 import shareit.model.User;
 import shareit.repository.BookingRepository;
 import shareit.repository.CommentRepository;
 import shareit.repository.ItemRepository;
+import shareit.repository.RequestRepository;
 import shareit.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,13 +32,25 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemDto create(ItemDto itemDto, Long userId) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден!"));
 
-        Item item = new Item(null, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), owner, null, null);
+        ItemRequest request = Optional.ofNullable(itemDto.getRequestId())
+                .flatMap(requestRepository::findById)
+                .orElse(null);
+
+        Item item = new Item(null,
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable(),
+                owner,
+                request,
+                null);
+
         itemRepository.save(item);
         return ItemMapper.toItemDto(item);
     }
