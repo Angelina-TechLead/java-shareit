@@ -15,10 +15,15 @@
     <groupId>shareit</groupId>
     <artifactId>shareit</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <name>ShareIt</name>
 
     <description>Сервис для шеринга вещей</description>
+    <modules>
+        <module>server</module>
+        <module>gateway</module>
+    </modules>
 
     <properties>
         <java.version>21</java.version>

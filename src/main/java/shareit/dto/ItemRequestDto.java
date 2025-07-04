@@ -3,7 +3,6 @@ package shareit.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shareit.model.Item;
 import shareit.model.ItemRequest;
 
 import java.time.LocalDateTime;
