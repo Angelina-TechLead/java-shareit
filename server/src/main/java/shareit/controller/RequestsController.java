@@ -1,6 +1,5 @@
 package shareit.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +32,7 @@ public class RequestsController {
     }
 
     @PostMapping
-    public ItemRequestDto createRequests(@Valid @RequestBody ItemRequestDto itemRequestDto,
+    public ItemRequestDto createRequests(@RequestBody ItemRequestDto itemRequestDto,
                                          @RequestHeader("X-Sharer-User-Id") Long userId)
     {
         return requestService.create(itemRequestDto, userId);

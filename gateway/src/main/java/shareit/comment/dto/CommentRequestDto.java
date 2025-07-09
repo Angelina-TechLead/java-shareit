@@ -1,23 +1,17 @@
-package shareit.comment.dto;
+package shareit.item.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import shareit.booking.dto.BookingDatesValid;
+import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
-
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@BookingDatesValid
 public class CommentRequestDto {
-    private Long id;
-
-    @NotBlank(message = "Комментарий не может быть пустым")
+    @NotBlank(message = "Текст комментария не может быть пустым")
+    @Size(max = 1000, message = "Текст комментария не может быть длиннее 1000 символов")
     private String text;
-
-    private String authorName;
-    private LocalDateTime created;
 }

@@ -18,6 +18,7 @@ import shareit.repository.CommentRepository;
 import shareit.repository.ItemRepository;
 import shareit.repository.RequestRepository;
 import shareit.repository.UserRepository;
+import shareit.model.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -125,11 +126,14 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundRequestException("Пользователь не найден"));
 
-        boolean hasCompletedBooking = bookingRepository.existsByItemIdAndBookerIdAndEndBefore(
-                itemId, userId, LocalDateTime.now());
+        var userBookings = bookingRepository.findAllByUserBookings(userId, itemId, LocalDateTime.now());
 
-        if (!hasCompletedBooking) {
-            throw new BadRequestException("Пользователь не может оставить комментарий без завершённого бронирования");
+        if (userBookings.isEmpty()) {
+            throw new BadRequestException("У пользователя с id " + userId + " должно быть хотя бы одно бронирование предмета с id " + itemId);
+        }
+
+        if (commentDto.getText() == null || commentDto.getText().isBlank()) {
+            throw new BadRequestException("Текст комментария не может быть пустым");
         }
 
         var comment = new Comment(null,

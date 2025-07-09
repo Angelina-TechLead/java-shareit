@@ -1,6 +1,5 @@
 package shareit.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +36,6 @@ public class BookingController {
         return bookingService.getById(id, userId);
     }
 
-
     @GetMapping("/owner")
     public List<BookingDto> getOwnerBookings(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                              @RequestHeader("X-Sharer-User-Id") Long userId) {
@@ -45,7 +43,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public Booking create(@Valid @RequestBody BookingDto bookingDto,
+    public Booking create(@RequestBody BookingDto bookingDto,
                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         return bookingService.create(bookingDto, userId);
     }

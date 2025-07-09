@@ -1,6 +1,5 @@
 package shareit.controller;
 
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import shareit.dto.CommentDto;
 import shareit.dto.ItemDto;
@@ -23,7 +22,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
+    public ItemDto createItem(@RequestBody ItemDto itemDto,
                               @RequestHeader("X-Sharer-User-Id") Long userId)
     {
         return itemService.create(itemDto, userId);
@@ -36,7 +35,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@PathVariable Long itemId,
-                              @Valid @RequestBody ItemDto itemDto,
+                              @RequestBody ItemDto itemDto,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.update(itemId, itemDto, userId);
     }
@@ -58,7 +57,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto postComment(@PathVariable Long itemId,
                                   @RequestHeader("X-Sharer-User-Id") Long userId,
-                                  @Valid @RequestBody CommentDto commentDto) {
+                                  @RequestBody CommentDto commentDto) {
         return itemService.addComment(itemId, userId, commentDto);
     }
 }
