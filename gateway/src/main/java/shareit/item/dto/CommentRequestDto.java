@@ -1,4 +1,4 @@
-package shareit.comment.dto;
+package shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -15,4 +15,4 @@ import lombok.Setter;
 public class CommentRequestDto {
     @NotBlank
     private String text;
-}
+} 
