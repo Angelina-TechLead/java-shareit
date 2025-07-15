@@ -1,0 +1,1 @@
+mvn clean package -DskipTests -Dcheckstyle.skip=true
